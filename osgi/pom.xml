@@ -31,8 +31,8 @@
     </parent>
     <modules>
         <module>bundle</module>
-        <module>itests</module>
-        <module>itests-felix</module>
+        <!-- <module>itests</module> -->
+        <!-- <module>itests-felix</module> -->
         <module>karaf</module>
     </modules>
 </project>
