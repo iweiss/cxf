@@ -266,7 +266,7 @@
                                     <xsd>${basedir}/src/main/resources/wsdl/oob_headertype.xsd</xsd>
                                     <extension>true</extension>
                                     <extensionArgs>
-                                        <extensionArg>-Xdv</extensionArg>
+                                        <!-- <extensionArg>-Xdv</extensionArg> -->
                                     </extensionArgs>
                                 </xsdOption>
                             </xsdOptions>
