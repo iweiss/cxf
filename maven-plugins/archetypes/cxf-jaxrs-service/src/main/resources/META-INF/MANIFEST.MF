@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Description1: JAR built by maven-archetype-plugin, providing no options to create a manifest file.
+Description2: This manifest file comes from the template in 'src/main/resources/META-INF/'.
+Specification-Title: ${project.name}
+Specification-Vendor: The Apache Software Foundation
+Specification-Version: ${project.version}
+Implementation-Title: ${project.name}
+Implementation-Vendor-Id: org.apache
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Version: ${project.version}
+

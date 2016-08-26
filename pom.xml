@@ -502,7 +502,13 @@
                         <encoding>UTF-8</encoding>
                         <detectOfflineLinks>false</detectOfflineLinks>
                         <notimestamp>true</notimestamp>
-                        <!--subpackages>org.apache.cxf</subpackages-->
+                        <!--subpackages>org.apache.cxf</subpackages-->                            
+                        <archive>
+                            <manifestEntries>
+                                <Implementation-Version>${project.version}</Implementation-Version>
+                                <Specification-Version>${project.version}</Specification-Version>					
+                            </manifestEntries>
+                        </archive>
                     </configuration>
                 </plugin>
                 <plugin>
