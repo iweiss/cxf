@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements. See the NOTICE file
@@ -27,7 +27,7 @@
     <parent>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-parent</artifactId>
-        <version>3.1.16</version>
+        <version>3.1.16.redhat-1</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <dependencies>
@@ -91,9 +91,7 @@
                                     <xsd>${basedir}/src/main/resources/schemas/configuration/instrumentation.xsd</xsd>
                                     <extension>true</extension>
                                     <bindingFile>${basedir}/src/main/build-resources/instrumentation.xjb</bindingFile>
-                                    <extensionArgs>
-                                        <!-- <extensionArg>-Xdv</extensionArg> -->
-                                    </extensionArgs>
+                                    <extensionArgs></extensionArgs>
                                 </xsdOption>
                             </xsdOptions>
                         </configuration>

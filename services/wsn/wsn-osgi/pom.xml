@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements. See the NOTICE file
@@ -28,7 +28,7 @@
     <parent>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-parent</artifactId>
-        <version>3.1.16</version>
+        <version>3.1.16.redhat-1</version>
         <relativePath>../../../parent/pom.xml</relativePath>
     </parent>
     <dependencies>
@@ -52,28 +52,20 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Require-Bundle>
-                            org.apache.activemq.activemq-core
-                        </Require-Bundle>
-                        <Import-Package>
-                            org.apache.cxf.*;resolution:=optional,
+                        <Require-Bundle>org.apache.activemq.activemq-core</Require-Bundle>
+                        <Import-Package>org.apache.cxf.*;resolution:=optional,
                             !org.apache.activemq*,
                             !org.apache.log4j.*,
                             !org.slf4j.*,
                             javax.xml.bind*;version="[0.0,3)",
                             javax.jws*;version="[0.0,3)",
                             javax.xml.ws*;version="[0.0,3)",
-                            *
-                        </Import-Package>
-                        <Export-Package>
-                            org.oasis_open.docs.wsn.*;version=1.3;-noimport:=true,
+                            *</Import-Package>
+                        <Export-Package>org.oasis_open.docs.wsn.*;version=1.3;-noimport:=true,
                             org.oasis_open.docs.wsrf.*;version=1.2;-noimport:=true,
-                            org.apache.cxf.wsn.client;version=${cxf.osgi.version.clean}
-                        </Export-Package>
-                        <Private-Package>
-                            org.apache.cxf.wsn.*,
-                            org.apache.cxf.common.logging
-                        </Private-Package>
+                            org.apache.cxf.wsn.client;version=${cxf.osgi.version.clean}</Export-Package>
+                        <Private-Package>org.apache.cxf.wsn.*,
+                            org.apache.cxf.common.logging</Private-Package>
                         <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
                     </instructions>
                 </configuration>

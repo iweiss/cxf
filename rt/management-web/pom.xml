@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements. See the NOTICE file
@@ -27,17 +27,15 @@
     <parent>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-parent</artifactId>
-        <version>3.1.16</version>
+        <version>3.1.16.redhat-1</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <properties>
-        <cxf.osgi.import>
-      !com.google.*,
+        <cxf.osgi.import>!com.google.*,
       org.apache.abdera.parser.stax,
       org.apache.abdera,
       com.ctc.wstx.stax,
-      *
-        </cxf.osgi.import>
+      *</cxf.osgi.import>
         <gwt.version>2.7.0</gwt.version>
         <gwt.inject.version>2.1.2</gwt.inject.version>
         <gwt.plugin.version>2.7.0</gwt.plugin.version>
@@ -172,15 +170,11 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Include-Resource>
-                          {maven-resources},
-                          static-content=${gwt.classes.dir}/static-content
-                        </Include-Resource>
-            <Export-Package>
-              org.apache.cxf.management.web.browser,
+                        <Include-Resource>{maven-resources},
+                          static-content=${gwt.classes.dir}/static-content</Include-Resource>
+            <Export-Package>org.apache.cxf.management.web.browser,
               org.apache.cxf.management.web.browser*,
-              org.apache.cxf.management.web.logging.atom*,
-            </Export-Package>
+              org.apache.cxf.management.web.logging.atom*,</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -198,21 +192,15 @@
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>
-                                            org.codehaus.mojo
-                                        </groupId>
-                                        <artifactId>
-                                            gwt-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [2.6.0,)
-                                        </versionRange>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>gwt-maven-plugin</artifactId>
+                                        <versionRange>[2.6.0,)</versionRange>
                                         <goals>
                                             <goal>compile</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore></ignore>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -239,12 +227,12 @@
                                     <target>
                                         <!-- GWT generated code is pretty crappy -->
                                         <propertyfile file="${basedir}/.settings/org.eclipse.jdt.core.prefs">
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore" />
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore" />
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedLocal" value="ignore" />
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.uncheckedTypeOperation" value="ignore" />
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.deprecation" value="ignore" />
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedPrivateMember" value="ignore" />
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore"></entry>
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore"></entry>
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedLocal" value="ignore"></entry>
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.uncheckedTypeOperation" value="ignore"></entry>
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.deprecation" value="ignore"></entry>
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedPrivateMember" value="ignore"></entry>
                                         </propertyfile>
                                     </target>
                                 </configuration>

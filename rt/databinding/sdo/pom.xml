@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements. See the NOTICE file
@@ -27,7 +27,7 @@
     <parent>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-parent</artifactId>
-        <version>3.1.16</version>
+        <version>3.1.16.redhat-1</version>
         <relativePath>../../../parent/pom.xml</relativePath>
     </parent>
     <properties>
@@ -101,20 +101,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <repositories>
-        <!--  temporary add the apache snapshot repo so tuscany folks can just grab this module and build it -->
-        <repository>
-            <id>apache.snapshots</id>
-            <name>Apache Snapshot Repository</name>
-            <url>http://repository.apache.org/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -182,10 +168,10 @@
                                         <!-- SDO generated code is Java1.4 based and thus uses raw List types -->
                                         <!-- It also generates code with unused imports -->
                                         <propertyfile file="${basedir}/.settings/org.eclipse.jdt.core.prefs">
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore" />
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore" />
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedLocal" value="ignore" />
-                                            <entry key="org.eclipse.jdt.core.compiler.problem.uncheckedTypeOperation" value="ignore" />
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore"></entry>
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore"></entry>
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.unusedLocal" value="ignore"></entry>
+                                            <entry key="org.eclipse.jdt.core.compiler.problem.uncheckedTypeOperation" value="ignore"></entry>
                                         </propertyfile>
                                     </target>
                                 </configuration>

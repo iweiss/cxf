@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements. See the NOTICE file
@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.apache.cxf.samples</groupId>
         <artifactId>cxf-samples</artifactId>
-        <version>3.1.16</version>
+        <version>3.1.16.redhat-1</version>
         <relativePath>..</relativePath>
     </parent>
     <build>
@@ -66,14 +66,12 @@
             <Bundle-Description>${project.description}</Bundle-Description>
             <Web-ContextPath>/cxf-samples-logbrowser</Web-ContextPath>
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
-            <Export-Package />
-            <Import-Package>
-            org.apache.cxf.jaxrs.servlet,
+            <Export-Package></Export-Package>
+            <Import-Package>org.apache.cxf.jaxrs.servlet,
             org.apache.abdera.parser.stax,
             com.ctc.wstx.stax,
             org.apache.abdera,
-            *
-            </Import-Package>
+            *</Import-Package>
         </instructions>
         </configuration>
     </plugin>
