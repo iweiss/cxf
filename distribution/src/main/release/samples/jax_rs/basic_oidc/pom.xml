@@ -26,29 +26,29 @@
     <parent>
         <groupId>org.apache.cxf.samples</groupId>
         <artifactId>cxf-samples</artifactId>
-        <version>3.1.16.redhat-1</version>
+        <version>3.1.16.redhat-2</version>
         <relativePath>../..</relativePath>
     </parent>
     <dependencies>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
-            <version>3.1.16.redhat-1</version>
+            <version>3.1.16.redhat-2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>3.1.16.redhat-1</version>
+            <version>3.1.16.redhat-2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
-            <version>3.1.16.redhat-1</version>
+            <version>3.1.16.redhat-2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-security-sso-oidc</artifactId>
-            <version>3.1.16.redhat-1</version>
+            <version>3.1.16.redhat-2</version>
         </dependency> 
         <dependency>
             <groupId>javax.ws.rs</groupId>
