@@ -20,7 +20,6 @@ package org.apache.cxf.attachment;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.nio.charset.StandardCharsets;
@@ -31,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import javax.activation.DataSource;
 import javax.xml.parsers.SAXParser;
@@ -46,25 +46,30 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.message.XMLMessage;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AttachmentDeserializerTest extends Assert {
-    
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class AttachmentDeserializerTest {
+
     private MessageImpl msg;
-    
+
     @Before
     public void setUp() throws Exception {
         msg = new MessageImpl();
         Exchange exchange = new ExchangeImpl();
         msg.setExchange(exchange);
     }
-    
+
     @Test
     public void testNoBoundaryInCT() throws Exception {
         //CXF-2623
-        String message = "SomeHeader: foo\n" 
+        String message = "SomeHeader: foo\n"
             + "------=_Part_34950_1098328613.1263781527359\n"
             + "Content-Type: text/xml; charset=UTF-8\n"
             + "Content-Transfer-Encoding: binary\n"
@@ -78,12 +83,12 @@ public class AttachmentDeserializerTest extends Assert {
             + "\n"
             + "<message>\n"
             + "------=_Part_34950_1098328613.1263781527359--";
-        
+
         Matcher m = Pattern.compile("^--(\\S*)$").matcher(message);
-        Assert.assertFalse(m.find());
+        assertFalse(m.find());
         m = Pattern.compile("^--(\\S*)$", Pattern.MULTILINE).matcher(message);
-        Assert.assertTrue(m.find());
-        
+        assertTrue(m.find());
+
         msg = new MessageImpl();
         msg.setContent(InputStream.class, new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)));
         msg.put(Message.CONTENT_TYPE, "multipart/related");
@@ -91,7 +96,7 @@ public class AttachmentDeserializerTest extends Assert {
         ad.initializeAttachments();
         assertEquals(1, msg.getAttachments().size());
     }
-    
+
     @Test
     public void testLazyAttachmentCollection() throws Exception {
         InputStream is = getClass().getResourceAsStream("mimedata2");
@@ -99,22 +104,22 @@ public class AttachmentDeserializerTest extends Assert {
                     + "start=\"<soap.xml@xfire.codehaus.org>\"; "
                     + "start-info=\"text/xml; charset=utf-8\"; "
                     + "boundary=\"----=_Part_4_701508.1145579811786\"";
-        
+
         msg.put(Message.CONTENT_TYPE, ct);
         msg.setContent(InputStream.class, is);
-        
+
         AttachmentDeserializer deserializer = new AttachmentDeserializer(msg);
         deserializer.initializeAttachments();
-        
+
         InputStream attBody = msg.getContent(InputStream.class);
         assertTrue(attBody != is);
         assertTrue(attBody instanceof DelegatingInputStream);
         attBody.close();
         assertEquals(2, msg.getAttachments().size());
-        List<String> cidlist = new ArrayList<String>();
+        List<String> cidlist = new ArrayList<>();
         cidlist.add("xfire_logo.jpg");
         cidlist.add("xfire_logo2.jpg");
-        
+
         for (Iterator<Attachment> it = msg.getAttachments().iterator(); it.hasNext();) {
             Attachment a = it.next();
             assertTrue(cidlist.remove(a.getId()));
@@ -124,7 +129,7 @@ public class AttachmentDeserializerTest extends Assert {
         assertEquals(0, msg.getAttachments().size());
         is.close();
     }
-    
+
     @Test
     public void testDeserializerMtom() throws Exception {
         InputStream is = getClass().getResourceAsStream("mimedata");
@@ -132,41 +137,41 @@ public class AttachmentDeserializerTest extends Assert {
                     + "start=\"<soap.xml@xfire.codehaus.org>\"; "
                     + "start-info=\"text/xml; charset=utf-8\"; "
                     + "boundary=\"----=_Part_4_701508.1145579811786\"";
-        
+
         msg.put(Message.CONTENT_TYPE, ct);
         msg.setContent(InputStream.class, is);
-        
+
         AttachmentDeserializer deserializer = new AttachmentDeserializer(msg);
         deserializer.initializeAttachments();
-        
+
         InputStream attBody = msg.getContent(InputStream.class);
         assertTrue(attBody != is);
         assertTrue(attBody instanceof DelegatingInputStream);
-        
+
         Collection<Attachment> atts = msg.getAttachments();
         assertNotNull(atts);
-        
+
         Iterator<Attachment> itr = atts.iterator();
         assertTrue(itr.hasNext());
-        
+
         Attachment a = itr.next();
         assertNotNull(a);
-        
+
         InputStream attIs = a.getDataHandler().getInputStream();
-        
+
         // check the cached output stream
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             IOUtils.copy(attBody, out);
             assertTrue(out.toString().startsWith("<env:Envelope"));
         }
-        
+
         // try streaming a character off the wire
         assertEquals(255, attIs.read());
         assertEquals(216, (char)attIs.read());
-        
+
 //        Attachment invalid = atts.get("INVALID");
 //        assertNull(invalid.getDataHandler().getInputStream());
-//        
+//
 //        assertTrue(attIs instanceof ByteArrayInputStream);
         is.close();
     }
@@ -216,7 +221,7 @@ public class AttachmentDeserializerTest extends Assert {
 //        assertTrue(attIs instanceof ByteArrayInputStream);
         is.close();
     }
-    
+
     @Test
     public void testDeserializerSwA() throws Exception {
         InputStream is = getClass().getResourceAsStream("swadata");
@@ -224,26 +229,26 @@ public class AttachmentDeserializerTest extends Assert {
             + "start=\"<86048FF3556694F7DA1918466DDF8143>\";    "
             + "boundary=\"----=_Part_0_14158819.1167275505862\"";
 
-        
+
         msg.put(Message.CONTENT_TYPE, ct);
         msg.setContent(InputStream.class, is);
-        
+
         AttachmentDeserializer deserializer = new AttachmentDeserializer(msg);
         deserializer.initializeAttachments();
-        
+
         InputStream attBody = msg.getContent(InputStream.class);
         assertTrue(attBody != is);
         assertTrue(attBody instanceof DelegatingInputStream);
-        
+
         Collection<Attachment> atts = msg.getAttachments();
         assertNotNull(atts);
-        
+
         Iterator<Attachment> itr = atts.iterator();
         assertTrue(itr.hasNext());
-        
+
         Attachment a = itr.next();
         assertNotNull(a);
-        
+
         InputStream attIs = a.getDataHandler().getInputStream();
 
         // check the cached output stream
@@ -251,7 +256,7 @@ public class AttachmentDeserializerTest extends Assert {
             IOUtils.copy(attBody, out);
             assertTrue(out.toString().startsWith("<?xml"));
         }
-        
+
         // try streaming a character off the wire
         assertTrue(attIs.read() == 'f');
         assertTrue(attIs.read() == 'o');
@@ -263,40 +268,40 @@ public class AttachmentDeserializerTest extends Assert {
 
         is.close();
     }
-    
+
     @Test
     public void testDeserializerSwAWithoutBoundryInContentType() throws Exception {
         InputStream is = getClass().getResourceAsStream("swadata");
         String ct = "multipart/related; type=\"text/xml\"; ";
 
-        
+
         msg.put(Message.CONTENT_TYPE, ct);
         msg.setContent(InputStream.class, is);
-        
+
         AttachmentDeserializer deserializer = new AttachmentDeserializer(msg);
         deserializer.initializeAttachments();
-        
+
         InputStream attBody = msg.getContent(InputStream.class);
         assertTrue(attBody != is);
         assertTrue(attBody instanceof DelegatingInputStream);
-        
+
         Collection<Attachment> atts = msg.getAttachments();
         assertNotNull(atts);
-        
+
         Iterator<Attachment> itr = atts.iterator();
         assertTrue(itr.hasNext());
-        
+
         Attachment a = itr.next();
         assertNotNull(a);
-        
+
         InputStream attIs = a.getDataHandler().getInputStream();
-        
+
         // check the cached output stream
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             IOUtils.copy(attBody, out);
             assertTrue(out.toString().startsWith("<?xml"));
         }
-        
+
         // try streaming a character off the wire
         assertTrue(attIs.read() == 'f');
         assertTrue(attIs.read() == 'o');
@@ -305,11 +310,11 @@ public class AttachmentDeserializerTest extends Assert {
         assertTrue(attIs.read() == 'a');
         assertTrue(attIs.read() == 'r');
         assertTrue(attIs.read() == -1);
-        
+
         assertFalse(itr.hasNext());
         is.close();
     }
-    
+
     @Test
     public void testDeserializerWithCachedFile() throws Exception {
         InputStream is = getClass().getResourceAsStream("mimedata");
@@ -317,39 +322,39 @@ public class AttachmentDeserializerTest extends Assert {
                     + "start=\"<soap.xml@xfire.codehaus.org>\"; "
                     + "start-info=\"text/xml; charset=utf-8\"; "
                     + "boundary=\"----=_Part_4_701508.1145579811786\"";
-        
+
         msg.put(Message.CONTENT_TYPE, ct);
         msg.setContent(InputStream.class, is);
         msg.put(AttachmentDeserializer.ATTACHMENT_MEMORY_THRESHOLD, "10");
-        
+
         AttachmentDeserializer deserializer = new AttachmentDeserializer(msg);
         deserializer.initializeAttachments();
-        
+
         InputStream attBody = msg.getContent(InputStream.class);
         assertTrue(attBody != is);
         assertTrue(attBody instanceof DelegatingInputStream);
-        
+
         Collection<Attachment> atts = msg.getAttachments();
         assertNotNull(atts);
-        
+
         Iterator<Attachment> itr = atts.iterator();
         assertTrue(itr.hasNext());
-        
+
         Attachment a = itr.next();
         assertNotNull(a);
-        
+
         InputStream attIs = a.getDataHandler().getInputStream();
-        
+
         assertFalse(itr.hasNext());
-        
+
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             IOUtils.copy(attIs, out);
             assertTrue(out.size() > 1000);
         }
         is.close();
     }
-    
-    
+
+
     @Test
     public void testSmallStream() throws Exception {
         byte[] messageBytes = ("------=_Part_1\n\nJJJJ\n------=_Part_1\n\n"
@@ -362,21 +367,21 @@ public class AttachmentDeserializerTest extends Assert {
 
         MimeBodyPartInputStream m = new MimeBodyPartInputStream(pushbackStream, "------=_Part_1".getBytes(),
                                                                 2048);
-        
+
         assertEquals(10, m.read(new byte[1000]));
         assertEquals(-1, m.read(new byte[1000]));
         assertEquals(-1, m.read(new byte[1000]));
         m.close();
     }
-    
+
     @Test
     public void testCXF2542() throws Exception {
-        StringBuilder buf = new StringBuilder();
+        StringBuilder buf = new StringBuilder(512);
         buf.append("------=_Part_0_2180223.1203118300920\n");
         buf.append("Content-Type: application/xop+xml; charset=UTF-8; type=\"text/xml\"\n");
         buf.append("Content-Transfer-Encoding: 8bit\n");
         buf.append("Content-ID: <soap.xml@xfire.codehaus.org>\n");
-        buf.append("\n");
+        buf.append('\n');
         buf.append("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "
                    + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                    + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"
@@ -387,7 +392,7 @@ public class AttachmentDeserializerTest extends Assert {
         InputStream rawInputStream = new ByteArrayInputStream(buf.toString().getBytes());
         MessageImpl message = new MessageImpl();
         message.setContent(InputStream.class, rawInputStream);
-        message.put(Message.CONTENT_TYPE, 
+        message.put(Message.CONTENT_TYPE,
                     "multipart/related; type=\"application/xop+xml\"; "
                     + "start=\"<soap.xml@xfire.codehaus.org>\"; "
                     + "start-info=\"text/xml\"; boundary=\"----=_Part_0_2180223.1203118300920\"");
@@ -399,18 +404,15 @@ public class AttachmentDeserializerTest extends Assert {
         inputStreamWithoutAttachments.close();
         rawInputStream.close();
     }
-    
+
     @Test
     public void imitateAttachmentInInterceptorForMessageWithMissingBoundary() throws Exception {
-        ByteArrayInputStream inputStream;
         String contentType = "multipart/mixed;boundary=abc123";
         String data = "--abc123\r\n\r\n<Document></Document>\r\n\r\n";
 
-        Message message;
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(data.getBytes());
 
-        inputStream = new ByteArrayInputStream(data.getBytes());
-
-        message = new XMLMessage(new MessageImpl());
+        Message message = new XMLMessage(new MessageImpl());
         message.put(Message.CONTENT_TYPE, contentType);
         message.setContent(InputStream.class, inputStream);
         message.put(AttachmentDeserializer.ATTACHMENT_DIRECTORY, System
@@ -419,12 +421,12 @@ public class AttachmentDeserializerTest extends Assert {
                 .valueOf(AttachmentDeserializer.THRESHOLD));
 
 
-        AttachmentDeserializer ad 
-            = new AttachmentDeserializer(message, 
+        AttachmentDeserializer ad
+            = new AttachmentDeserializer(message,
                                          Collections.singletonList("multipart/mixed"));
 
         ad.initializeAttachments();
-        message.getAttachments().size();
+        assertEquals(0, message.getAttachments().size());
 
         inputStream.close();
     }
@@ -446,10 +448,10 @@ public class AttachmentDeserializerTest extends Assert {
                 + "------=_Part_1--").getBytes(StandardCharsets.UTF_8);
         ByteArrayInputStream in = new ByteArrayInputStream(messageBytes) {
             public int read(byte[] b, int off, int len) {
-                return super.read(b, off, len >= 2 ? 2 : len); 
+                return super.read(b, off, len >= 2 ? 2 : len);
             }
         };
-        
+
         Message message = new MessageImpl();
         message.put(Message.CONTENT_TYPE, contentType);
         message.setContent(InputStream.class, in);
@@ -459,44 +461,29 @@ public class AttachmentDeserializerTest extends Assert {
                 .valueOf(AttachmentDeserializer.THRESHOLD));
 
 
-        AttachmentDeserializer ad 
-            = new AttachmentDeserializer(message, 
+        AttachmentDeserializer ad
+            = new AttachmentDeserializer(message,
                                          Collections.singletonList("multipart/mixed"));
 
         ad.initializeAttachments();
-        
-        String s = getString(message.getContent(InputStream.class));
+
+        String s = IOUtils.toString(message.getContent(InputStream.class));
         assertEquals("JJJJ", s.trim());
         int count = 1;
         for (Attachment a : message.getAttachments()) {
-            s = getString(a.getDataHandler().getInputStream());
+            s = IOUtils.toString(a.getDataHandler().getInputStream());
             assertEquals("ABCD" + count++, s);
         }
 
         in.close();
     }
-    
-    private String getString(InputStream ins) throws Exception {
-        try (ByteArrayOutputStream bout = new ByteArrayOutputStream(100)) {
-            byte b[] = new byte[100];
-            int i = ins.read(b);
-            while (i > 0) {
-                bout.write(b, 0, i);
-                i = ins.read(b);
-            }
-            if (i == 0) {
-                throw new IOException("Should not be 0");
-            }
-            return bout.toString();
-        }
-    }
-    
+
     @Test
     public void testCXF3383() throws Exception {
         String contentType = "multipart/related; type=\"application/xop+xml\";"
-            + " boundary=\"uuid:7a555f51-c9bb-4bd4-9929-706899e2f793\"; start=" 
+            + " boundary=\"uuid:7a555f51-c9bb-4bd4-9929-706899e2f793\"; start="
             + "\"<root.message@cxf.apache.org>\"; start-info=\"text/xml\"";
-        
+
         Message message = new MessageImpl();
         message.put(Message.CONTENT_TYPE, contentType);
         message.setContent(InputStream.class, getClass().getResourceAsStream("cxf3383.data"));
@@ -506,18 +493,18 @@ public class AttachmentDeserializerTest extends Assert {
                 .valueOf(AttachmentDeserializer.THRESHOLD));
 
 
-        AttachmentDeserializer ad 
-            = new AttachmentDeserializer(message, 
+        AttachmentDeserializer ad
+            = new AttachmentDeserializer(message,
                                          Collections.singletonList("multipart/related"));
-        
+
         ad.initializeAttachments();
-        
-        
+
+
         for (int x = 1; x < 50; x++) {
             String cid = "1882f79d-e20a-4b36-a222-7a75518cf395-" + x + "@cxf.apache.org";
             DataSource ds = AttachmentUtil.getAttachmentDataSource(cid, message.getAttachments());
-            byte bts[] = new byte[1024];
-            
+            byte[] bts = new byte[1024];
+
             InputStream ins = ds.getInputStream();
             int count = 0;
             int sz = ins.read(bts, 0, bts.length);
@@ -532,14 +519,14 @@ public class AttachmentDeserializerTest extends Assert {
         }
     }
 
-    
+
     @Test
     public void testCXF3582() throws Exception {
         String contentType = "multipart/related; type=\"application/xop+xml\"; "
             + "boundary=\"uuid:906fa67b-85f9-4ef5-8e3d-52416022d463\"; "
             + "start=\"<root.message@cxf.apache.org>\"; start-info=\"text/xml\"";
-            
-            
+
+
         Message message = new MessageImpl();
         message.put(Message.CONTENT_TYPE, contentType);
         message.setContent(InputStream.class, getClass().getResourceAsStream("cxf3582.data"));
@@ -549,15 +536,15 @@ public class AttachmentDeserializerTest extends Assert {
                 .valueOf(AttachmentDeserializer.THRESHOLD));
 
 
-        AttachmentDeserializer ad 
-            = new AttachmentDeserializer(message, 
+        AttachmentDeserializer ad
+            = new AttachmentDeserializer(message,
                                          Collections.singletonList("multipart/related"));
-        
+
         ad.initializeAttachments();
-        
+
         String cid = "1a66bb35-67fc-4e89-9f33-48af417bf9fe-1@apache.org";
         DataSource ds = AttachmentUtil.getAttachmentDataSource(cid, message.getAttachments());
-        byte bts[] = new byte[1024];
+        byte[] bts = new byte[1024];
         InputStream ins = ds.getInputStream();
         int count = ins.read(bts, 0, bts.length);
         assertEquals(500, count);
@@ -580,8 +567,8 @@ public class AttachmentDeserializerTest extends Assert {
         String contentType = "multipart/related; type=\"application/xop+xml\"; "
             + "boundary=\"uuid:906fa67b-85f9-4ef5-8e3d-52416022d463\"; "
             + "start=\"<root.message@cxf.apache.org>\"; start-info=\"text/xml\"";
-            
-            
+
+
         Message message = new MessageImpl();
         message.put(Message.CONTENT_TYPE, contentType);
         message.setContent(InputStream.class, getClass().getResourceAsStream("cxf3582.data"));
@@ -591,15 +578,15 @@ public class AttachmentDeserializerTest extends Assert {
                 .valueOf(AttachmentDeserializer.THRESHOLD));
 
 
-        AttachmentDeserializer ad 
-            = new AttachmentDeserializer(message, 
+        AttachmentDeserializer ad
+            = new AttachmentDeserializer(message,
                                          Collections.singletonList("multipart/related"));
-        
+
         ad.initializeAttachments();
-        
+
         String cid = "1a66bb35-67fc-4e89-9f33-48af417bf9fe-1@apache.org";
         DataSource ds = AttachmentUtil.getAttachmentDataSource(cid, message.getAttachments());
-        byte bts[] = new byte[1024];
+        byte[] bts = new byte[1024];
         InputStream ins = ds.getInputStream();
         int count = 0;
         int x = ins.read(bts, 500, 200);
@@ -631,8 +618,8 @@ public class AttachmentDeserializerTest extends Assert {
         String contentType = "multipart/related; type=\"application/xop+xml\"; "
             + "boundary=\"uuid:906fa67b-85f9-4ef5-8e3d-52416022d463\"; "
             + "start=\"<root.message@cxf.apache.org>\"; start-info=\"text/xml\"";
-            
-            
+
+
         Message message = new MessageImpl();
         message.put(Message.CONTENT_TYPE, contentType);
         message.setContent(InputStream.class, getClass().getResourceAsStream("cxf3582.data"));
@@ -642,15 +629,15 @@ public class AttachmentDeserializerTest extends Assert {
                 .valueOf(AttachmentDeserializer.THRESHOLD));
 
 
-        AttachmentDeserializer ad 
-            = new AttachmentDeserializer(message, 
+        AttachmentDeserializer ad
+            = new AttachmentDeserializer(message,
                                          Collections.singletonList("multipart/related"));
-        
+
         ad.initializeAttachments();
-        
+
         String cid = "1a66bb35-67fc-4e89-9f33-48af417bf9fe-1@apache.org";
         DataSource ds = AttachmentUtil.getAttachmentDataSource(cid, message.getAttachments());
-        byte bts[] = new byte[1024];
+        byte[] bts = new byte[1024];
         InputStream ins = ds.getInputStream();
         int count = 0;
         int x = ins.read(bts, 100, 600);
@@ -676,5 +663,124 @@ public class AttachmentDeserializerTest extends Assert {
         assertEquals(-1, ins.read(new byte[1000], 100, 600));
         ins.close();
     }
-}
 
+    @Test
+    public void testManyAttachments() throws Exception {
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append("SomeHeader: foo\n")
+            .append("------=_Part_34950_1098328613.1263781527359\n")
+            .append("Content-Type: text/xml; charset=UTF-8\n")
+            .append("Content-Transfer-Encoding: binary\n")
+            .append("Content-Id: <318731183421.1263781527359.IBM.WEBSERVICES@auhpap02>\n")
+            .append('\n')
+            .append("<envelope/>\n");
+
+        // Add many attachments
+        IntStream.range(0, 100000).forEach(i -> {
+            sb.append("------=_Part_34950_1098328613.1263781527359\n")
+                .append("Content-Type: text/xml\n")
+                .append("Content-Transfer-Encoding: binary\n")
+                .append("Content-Id: <b86a5f2d-e7af-4e5e-b71a-9f6f2307cab0>\n")
+                .append('\n')
+                .append("<message>\n")
+                .append("------=_Part_34950_1098328613.1263781527359--\n");
+        });
+
+        msg = new MessageImpl();
+        msg.setContent(InputStream.class, new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8)));
+        msg.put(Message.CONTENT_TYPE, "multipart/related");
+        AttachmentDeserializer ad = new AttachmentDeserializer(msg);
+        ad.initializeAttachments();
+
+        // Force it to load the attachments
+        try {
+            msg.getAttachments().size();
+            fail("Failure expected on too many attachments");
+        } catch (RuntimeException ex) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testChangingMaxAttachmentCount() throws Exception {
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append("SomeHeader: foo\n")
+            .append("------=_Part_34950_1098328613.1263781527359\n")
+            .append("Content-Type: text/xml; charset=UTF-8\n")
+            .append("Content-Transfer-Encoding: binary\n")
+            .append("Content-Id: <318731183421.1263781527359.IBM.WEBSERVICES@auhpap02>\n")
+            .append('\n')
+            .append("<envelope/>\n");
+
+        // Add many attachments
+        IntStream.range(0, 40).forEach(i -> {
+            sb.append("------=_Part_34950_1098328613.1263781527359\n")
+                .append("Content-Type: text/xml\n")
+                .append("Content-Transfer-Encoding: binary\n")
+                .append("Content-Id: <b86a5f2d-e7af-4e5e-b71a-9f6f2307cab0>\n")
+                .append('\n')
+                .append("<message>\n")
+                .append("------=_Part_34950_1098328613.1263781527359--\n");
+        });
+
+        msg = new MessageImpl();
+        msg.put(AttachmentDeserializer.ATTACHMENT_MAX_COUNT, "30");
+        msg.setContent(InputStream.class, new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8)));
+        msg.put(Message.CONTENT_TYPE, "multipart/related");
+        AttachmentDeserializer ad = new AttachmentDeserializer(msg);
+        ad.initializeAttachments();
+
+        // Force it to load the attachments
+        try {
+            msg.getAttachments().size();
+            fail("Failure expected on too many attachments");
+        } catch (RuntimeException ex) {
+            // expected
+        }
+
+        // Now we'll allow it
+        msg = new MessageImpl();
+        msg.put(AttachmentDeserializer.ATTACHMENT_MAX_COUNT, "60");
+        msg.setContent(InputStream.class, new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8)));
+        msg.put(Message.CONTENT_TYPE, "multipart/related");
+        ad = new AttachmentDeserializer(msg);
+        ad.initializeAttachments();
+
+        // Force it to load the attachments
+        assertEquals(40, msg.getAttachments().size());
+    }
+
+    @Test
+    public void testInvalidContentDispositionFilename() throws Exception {
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append("SomeHeader: foo\n")
+            .append("------=_Part_34950_1098328613.1263781527359\n")
+            .append("Content-Type: text/xml; charset=UTF-8\n")
+            .append("Content-Transfer-Encoding: binary\n")
+            .append("Content-Id: <318731183421.1263781527359.IBM.WEBSERVICES@auhpap02>\n")
+            .append('\n')
+            .append("<envelope/>\n");
+
+        sb.append("------=_Part_34950_1098328613.1263781527359\n")
+            .append("Content-Type: text/xml\n")
+            .append("Content-Transfer-Encoding: binary\n")
+            .append("Content-Id: <b86a5f2d-e7af-4e5e-b71a-9f6f2307cab0>\n")
+            .append("Content-Disposition: attachment; filename=../../../../../../../../etc/passwd\n")
+            .append('\n')
+            .append("<message>\n")
+            .append("------=_Part_34950_1098328613.1263781527359--\n");
+
+        msg = new MessageImpl();
+        msg.setContent(InputStream.class, new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8)));
+        msg.put(Message.CONTENT_TYPE, "multipart/related");
+        AttachmentDeserializer ad = new AttachmentDeserializer(msg);
+        ad.initializeAttachments();
+
+        // Force it to load the attachments
+        assertEquals(1, msg.getAttachments().size());
+        Attachment attachment = msg.getAttachments().iterator().next();
+        AttachmentDataSource dataSource = (AttachmentDataSource)attachment.getDataHandler().getDataSource();
+        assertEquals("passwd", dataSource.getName());
+    }
+
+}
