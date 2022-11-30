@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 import javax.activation.DataSource;
+import javax.activation.URLDataSource;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -49,9 +50,11 @@ import org.apache.cxf.message.XMLMessage;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -750,4 +753,55 @@ public class AttachmentDeserializerTest {
         assertEquals(40, msg.getAttachments().size());
     }
 
+    @Test
+    public void testInvalidContentDispositionFilename() throws Exception {
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append("SomeHeader: foo\n")
+            .append("------=_Part_34950_1098328613.1263781527359\n")
+            .append("Content-Type: text/xml; charset=UTF-8\n")
+            .append("Content-Transfer-Encoding: binary\n")
+            .append("Content-Id: <318731183421.1263781527359.IBM.WEBSERVICES@auhpap02>\n")
+            .append('\n')
+            .append("<envelope/>\n");
+
+        sb.append("------=_Part_34950_1098328613.1263781527359\n")
+            .append("Content-Type: text/xml\n")
+            .append("Content-Transfer-Encoding: binary\n")
+            .append("Content-Id: <b86a5f2d-e7af-4e5e-b71a-9f6f2307cab0>\n")
+            .append("Content-Disposition: attachment; filename=../../../../../../../../etc/passwd\n")
+            .append('\n')
+            .append("<message>\n")
+            .append("------=_Part_34950_1098328613.1263781527359--\n");
+
+        msg = new MessageImpl();
+        msg.setContent(InputStream.class, new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8)));
+        msg.put(Message.CONTENT_TYPE, "multipart/related");
+        AttachmentDeserializer ad = new AttachmentDeserializer(msg);
+        ad.initializeAttachments();
+
+        // Force it to load the attachments
+        assertEquals(1, msg.getAttachments().size());
+        Attachment attachment = msg.getAttachments().iterator().next();
+        AttachmentDataSource dataSource = (AttachmentDataSource)attachment.getDataHandler().getDataSource();
+        assertEquals("passwd", dataSource.getName());
+    }
+
+    @Test
+    public void testCXF8706() {
+        final DataSource ds = AttachmentUtil
+            .getAttachmentDataSource("cid:http://image.com/1.gif", Collections.emptyList());
+        assertThat(ds, instanceOf(LazyDataSource.class));
+    }
+
+    @Test
+    public void testCXF8706followUrl() {
+        System.setProperty(AttachmentUtil.ATTACHMENT_XOP_FOLLOW_URLS_PROPERTY, "true");
+        try {
+            final DataSource ds = AttachmentUtil
+                .getAttachmentDataSource("cid:http://image.com/1.gif", Collections.emptyList());
+            assertThat(ds, instanceOf(URLDataSource.class));
+        } finally {
+            System.clearProperty(AttachmentUtil.ATTACHMENT_XOP_FOLLOW_URLS_PROPERTY);
+        }
+    }
 }
