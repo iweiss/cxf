@@ -302,7 +302,7 @@
                                     <catalog>${basedir}/src/main/build-resources/catalog.cat</catalog>
                                     <extensionArgs>
                                         <extensionArg>-npa</extensionArg>
-                                        <!-- <extensionArg>-Xdv</extensionArg> -->
+                                        <extensionArg>-Xdv</extensionArg>
                                         <!-- <extensionArg>-Xjavadoc</extensionArg> -->
                                     </extensionArgs>
                                 </xsdOption>
