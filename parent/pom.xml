@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf</artifactId>
-        <version>3.1.16.redhat-2</version>
+        <version>3.1.16.SP1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cxf-parent</artifactId>
@@ -33,14 +33,14 @@
         <cxf.surefire.fork.mode>once</cxf.surefire.fork.mode>
         <cxf.surefire.format>brief</cxf.surefire.format>
         <cxf.surefire.usefile>false</cxf.surefire.usefile>
-        <cxf.surefire.parallel.mode></cxf.surefire.parallel.mode>
+        <cxf.surefire.parallel.mode />
         <cxf.surefire.fork.vmargs>-ea</cxf.surefire.fork.vmargs>
         <cxf.server.launcher.vmargs>-ea</cxf.server.launcher.vmargs>
         <cxf.surefire.enable.assertions>true</cxf.surefire.enable.assertions>
         <cxf.compile.flags>-Xlint:unchecked,deprecation,fallthrough,finally</cxf.compile.flags>
         <cxf.compile.show.deprecation>true</cxf.compile.show.deprecation>
         <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
-        <cxf.codegen.jvmArgs></cxf.codegen.jvmArgs>
+        <cxf.codegen.jvmArgs />
         <cxf.eclipse.outputDirectory>${basedir}/target/classes</cxf.eclipse.outputDirectory>
         <!-- stuff related to ASM -->
         <cxf.asm.groupId>org.ow2.asm</cxf.asm.groupId>
@@ -48,11 +48,11 @@
         <cxf.asm.version>5.0.4</cxf.asm.version>
         <cxf.osgi.asm.version>[3.0,6.1)</cxf.osgi.asm.version>
         <!-- OSGi related properties -->
-        <cxf.fragment.host></cxf.fragment.host>
-        <cxf.bundle.activator></cxf.bundle.activator>
-        <cxf.osgi.import></cxf.osgi.import>
+        <cxf.fragment.host />
+        <cxf.bundle.activator />
+        <cxf.osgi.import />
         <cxf.osgi.symbolic.name>${project.groupId}.${project.artifactId}</cxf.osgi.symbolic.name>
-        <cxf.osgi.dynamic.import></cxf.osgi.dynamic.import>
+        <cxf.osgi.dynamic.import />
         <cxf.osgi.spring.version>[3.1,5)</cxf.osgi.spring.version>
         <cxf.osgi.spring.osgi.version>[1.2.0,2)</cxf.osgi.spring.osgi.version>
         <cxf.osgi.commons.lang.version>[2.4,3)</cxf.osgi.commons.lang.version>
@@ -223,13 +223,13 @@
         <cxf.brave.zipkin.version>1.24.0</cxf.brave.zipkin.version>
         <cxf.brave.reporter.version>0.9.0</cxf.brave.reporter.version>
         <cxf.findbugs.version>3.0.2</cxf.findbugs.version>
-        <cxf.checkstyle.extension></cxf.checkstyle.extension>
-        <cxf.jaxb.context.class></cxf.jaxb.context.class>
+        <cxf.checkstyle.extension />
+        <cxf.jaxb.context.class />
         <cxf.jaxb.context.class.property>none</cxf.jaxb.context.class.property>
         <cxf.spring.validation.mode>VALIDATION_AUTO</cxf.spring.validation.mode>
         <cxf.downloadSources>true</cxf.downloadSources>
-        <cxf.pmd.eclipse.ruleset.ext></cxf.pmd.eclipse.ruleset.ext>
-        <cxf.resources.base.path></cxf.resources.base.path>
+        <cxf.pmd.eclipse.ruleset.ext />
+        <cxf.resources.base.path />
     </properties>
     <build>
         <resources>
@@ -475,7 +475,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -488,7 +488,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -502,7 +502,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>

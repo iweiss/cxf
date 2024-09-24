@@ -27,7 +27,7 @@
     <parent>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-parent</artifactId>
-        <version>3.1.16.redhat-2</version>
+        <version>3.1.16.SP1-SNAPSHOT</version>
         <relativePath>../../parent/pom.xml</relativePath>
     </parent>
     <dependencies>
@@ -91,7 +91,7 @@
                                     <xsd>${basedir}/src/main/resources/schemas/configuration/instrumentation.xsd</xsd>
                                     <extension>true</extension>
                                     <bindingFile>${basedir}/src/main/build-resources/instrumentation.xjb</bindingFile>
-                                    <extensionArgs></extensionArgs>
+                                    <extensionArgs />
                                 </xsdOption>
                             </xsdOptions>
                         </configuration>
