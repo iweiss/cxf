@@ -27,7 +27,7 @@
     <parent>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-parent</artifactId>
-        <version>3.1.16.redhat-2</version>
+        <version>3.1.16.SP1-SNAPSHOT</version>
         <relativePath>../../../parent/pom.xml</relativePath>
     </parent>
     <properties>
@@ -43,7 +43,7 @@
             org.springframework*;resolution:="optional";version="${cxf.osgi.spring.version}"</cxf.osgi.import>
         <cxf.osgi.dynamic.import>org.eclipse.jetty.jmx</cxf.osgi.dynamic.import>
         <!-- keep in sync with services exported in activator -->
-        <cxf.export.service></cxf.export.service>
+        <cxf.export.service />
     </properties>
     <dependencies>
         <dependency>
